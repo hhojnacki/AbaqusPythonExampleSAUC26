@@ -1,0 +1,143 @@
+*HEADING
+Softer material
+**
+*NODE, INPUT=selfcontact_gask_node.inp, NSET=NSET1
+*NODE, NSET=DIE
+    1001,     8.08006,       2.062
+*NSET,NSET=NALL
+NSET1, DIE
+**
+*NSET, NSET=BOTTOM
+370, 404, 432, 460, 486, 508, 532, 561, 587, 609,
+633, 657, 681, 694, 702, 703, 706, 707, 708, 709,
+710, 711  
+**
+*NSET, NSET=LEFT
+126, 153, 186, 222, 256, 292, 330, 368, 369, 370
+**
+**
+*ELEMENT, TYPE=CPE4H, ELSET=GASKET, 
+INPUT=selfcontact_gask_element1.inp
+*ELEMENT, TYPE=CPE4, ELSET=BACKBONE, 
+INPUT=selfcontact_gask_element2.inp
+**
+*ELSET,ELSET=ALLFEM
+GASKET,BACKBONE
+**
+** gasket
+**
+*SOLID SECTION, ELSET=GASKET, MATERIAL=ELSTMRSOFT
+          1.,
+**
+** backbone
+**
+*SOLID SECTION, ELSET=BACKBONE, MATERIAL=PLASTIC
+          1.,
+**
+** symm
+**
+*BOUNDARY
+  LEFT  , 1,,          0.
+  BOTTOM, 2,,          0.
+**
+** plastic
+**
+*MATERIAL, NAME=PLASTIC
+**
+*ELASTIC, TYPE=ISO
+       8000.,         0.4
+**
+** Elastomer
+**
+*MATERIAL, NAME=ELSTMRBASE
+**
+*HYPERELASTIC, N=1
+      0.35,      0.25
+*****************************
+**
+*MATERIAL, NAME=ELSTMRSOFT
+**
+*HYPERELASTIC, N=1
+      0.28,      0.25
+*****************************
+**
+*MATERIAL, NAME=ELSTMRFIRM
+**
+*HYPERELASTIC, N=1
+      0.42,      0.25
+*****************************
+**
+** Contact definition
+**
+*****************************
+*RIGID BODY,ANALYTICAL SURFACE=DIE,REF NODE=1001
+*SURFACE,NAME=DIE, TYPE=SEGMENTS
+START,  8.080, 2.062 
+ LINE,  0.000, 2.062
+**
+*ELSET, ELSET=SKIN4, GEN
+1, 64, 1
+626, 638, 1
+**
+*SURFACE,NAME=SKIN
+SKIN4, S4
+   65, S3
+**
+*CONTACT PAIR,INTERACTION=INT2
+SKIN,DIE
+*CONTACT PAIR,INTERACTION=INT3
+SKIN,SKIN
+*SURFACE INTERACTION,NAME=INT2,TRACKING THICKNESS=5
+*FRICTION
+.05, 
+*SURFACE INTERACTION,NAME=INT3,TRACKING THICKNESS=5
+*FRICTION, ROUGH
+*CONTACT DAMPING, DEFINITION=DAMPING COEFFICIENT
+1.0e-1,0.02,0.5
+**
+********************
+**
+** Boundary conditions
+**
+********************
+*BOUNDARY, OP=NEW
+**
+** topdie
+**
+DIE, 1,6,          0.
+****************************************
+**
+** Step definition
+**
+****************************************
+*STEP, INC=200, NLGEOM, UNSYMM=YES
+*STATIC
+0.05 , 1.0,  , 0.05
+*BOUNDARY,OP=MOD
+DIE,2, ,-0.61 
+*PRINT, CONTACT=YES
+*CONTACT FILE,FREQ=999
+*CONTACT PRINT,FREQ=999
+*EL PRINT, ELSET=GASKET, FREQ=999
+S,
+E,
+*NODE PRINT, FREQ=999
+U,
+*OUTPUT,FIELD,FREQUENCY=200
+*NODE OUTPUT,NSET=NALL
+U,
+*ELEMENT OUTPUT,ELSET=ALLFEM
+S,
+E,
+** * * * * * * * * * * * * * * * * * * * *
+** HH output requests
+*OUTPUT,FIELD,FREQUENCY=1
+*NODE OUTPUT,NSET=DIE
+U,RF
+** * * * * * * * * * * * * * * * * * * * *
+*CONTACT OUTPUT
+CSTRESS,CDISP
+*OUTPUT,HISTORY,FREQUENCY=1
+*NODE OUTPUT,NSET=DIE
+U,RF
+*END STEP
