@@ -15,8 +15,7 @@ import sys
 #
 #  Import the abaqus stuff
 import odbAccess as od
-#####import gasketClass as gc
-import gasketClass2 as gc
+import gasketClass as gc
 #
 #
 #  get the results from all runs specified in the arguments
