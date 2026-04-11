@@ -3,6 +3,8 @@
 #  Abaqus Python script to extract results from gasket self contact example
 #
 #  This is a prototype version of a script for presentation at SUAC26
+#  To run: abaqus python summarize.py <list of .odb files>
+#  Example: abaqus python summarize.py *.odb
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
